@@ -1,4 +1,4 @@
-package com.example.smart_booking_platform;
+package com.gagani.smart_booking_platform;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
