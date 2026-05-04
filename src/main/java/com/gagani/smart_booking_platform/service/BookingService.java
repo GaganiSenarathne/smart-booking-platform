@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface BookingService {
 
-    public Booking createBooking(BookingDTO dto, String email);
-    public Booking cancelBooking(Long id, String email);
-    public List<Booking> getMyBookings(String email);
+    Booking createBooking(BookingDTO dto, String email);
+    Booking cancelBooking(Long id, String email);
+    List<Booking> getMyBookings(String email);
 
 }
