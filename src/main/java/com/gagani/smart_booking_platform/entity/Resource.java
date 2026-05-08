@@ -1,8 +1,12 @@
 package com.gagani.smart_booking_platform.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class Resource {
 
     @Id

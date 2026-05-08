@@ -7,7 +7,7 @@ import java.time.Instant;
 
 @Getter
 @Setter
-public class BookingDTO {
+public class BookingRequestDTO {
 
     private Long resourceId;
     private Instant startTime;

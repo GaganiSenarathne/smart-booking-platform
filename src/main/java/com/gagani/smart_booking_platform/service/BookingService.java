@@ -1,14 +1,17 @@
 package com.gagani.smart_booking_platform.service;
 
-import com.gagani.smart_booking_platform.dto.BookingDTO;
+import com.gagani.smart_booking_platform.dto.BookingRequestDTO;
+import com.gagani.smart_booking_platform.dto.BookingResponseDTO;
 import com.gagani.smart_booking_platform.entity.Booking;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface BookingService {
 
-    Booking createBooking(BookingDTO dto, String email);
-    Booking cancelBooking(Long id, String email);
-    List<Booking> getMyBookings(String email);
+    BookingResponseDTO createBooking(BookingRequestDTO dto, String email);
+    BookingResponseDTO cancelBooking(Long id, String email);
+    Page<BookingResponseDTO> getMyBookings(String email, Pageable pageable);
+    Page<BookingResponseDTO> getAllBookings(Pageable pageable);
+    BookingResponseDTO confirmBooking(Long id);
 
 }

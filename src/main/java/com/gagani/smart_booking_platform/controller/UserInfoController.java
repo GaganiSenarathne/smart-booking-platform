@@ -1,6 +1,7 @@
 package com.gagani.smart_booking_platform.controller;
 
-import com.gagani.smart_booking_platform.dto.UserDTO;
+import com.gagani.smart_booking_platform.dto.UserRequestDTO;
+import com.gagani.smart_booking_platform.dto.UserResponseDTO;
 import com.gagani.smart_booking_platform.entity.AuthRequest;
 import com.gagani.smart_booking_platform.entity.UserInfo;
 import com.gagani.smart_booking_platform.service.JwtService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +31,8 @@ public class UserInfoController {
     }
 
     @PostMapping("/addNewUser")
-    public ResponseEntity<UserInfo> addNewUser(@RequestBody UserDTO userDTO) {
-        UserInfo savedUser = userInfoService.createUser(userDTO);
+    public ResponseEntity<UserResponseDTO> addNewUser(@RequestBody UserRequestDTO userRequestDTO) {
+        UserResponseDTO savedUser = userInfoService.createUser(userRequestDTO);
         return ResponseEntity.ok(savedUser);
     }
 
@@ -49,11 +51,12 @@ public class UserInfoController {
             throw new UsernameNotFoundException("Invalid user request!");
         }
     }
-//
-//    @GetMapping("/user/profile")
-//    public UserInfo getUserInfo(@RequestBody UserDTO userDTO) {
-//
-//    }
+
+    @GetMapping("/user/profile")
+    public UserResponseDTO getUserInfo(@RequestBody UserRequestDTO userRequestDTO) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userInfoService.getCurrentUser(email);
+    }
 
 
 

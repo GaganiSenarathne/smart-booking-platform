@@ -1,6 +1,7 @@
 package com.gagani.smart_booking_platform.service.impl;
 
-import com.gagani.smart_booking_platform.dto.UserDTO;
+import com.gagani.smart_booking_platform.dto.UserRequestDTO;
+import com.gagani.smart_booking_platform.dto.UserResponseDTO;
 import com.gagani.smart_booking_platform.entity.Organization;
 import com.gagani.smart_booking_platform.entity.Role;
 import com.gagani.smart_booking_platform.entity.UserInfo;
@@ -36,7 +37,6 @@ public class UserInfoServiceImpl implements UserInfoService, UserDetailsService 
 
     @Autowired
     public UserInfoServiceImpl(UserInfoRepository userInfoRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, OrganizationRepository organizationRepository) {
-
         this.userInfoRepository = userInfoRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
@@ -44,19 +44,19 @@ public class UserInfoServiceImpl implements UserInfoService, UserDetailsService 
     }
 
     @Override
-    public UserInfo createUser(UserDTO userDTO) {
-        if (userInfoRepository.findUserByEmail(userDTO.getEmail()).isPresent()) {
+    public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
+        if (userInfoRepository.findUserByEmail(userRequestDTO.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
 
         UserInfo user = new UserInfo();
-        user.setName(userDTO.getName());
-        user.setEmail(userDTO.getEmail());
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setName(userRequestDTO.getName());
+        user.setEmail(userRequestDTO.getEmail());
+        user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
         user.setStatus(UserStatus.ACTIVE);
         user.setCreated_at(Instant.now());
         Organization organization = organizationRepository
-                .findById(userDTO.getOrganizationId())
+                .findById(userRequestDTO.getOrganizationId())
                 .orElseThrow(() -> new RuntimeException("Organization not found"));
 
         user.setOrganization(organization);
@@ -66,12 +66,13 @@ public class UserInfoServiceImpl implements UserInfoService, UserDetailsService 
 
         user.setRoles(Set.of(defaultRole));
 
-        return userInfoRepository.save(user); // need to return saved entity
+        UserInfo userInfo =  userInfoRepository.save(user); // need to return saved entity
+
+        return mapUserToDTO(userInfo);
     }
 
     @Override
-    public UserInfo updateUser(int id, UserInfo user) {
-
+    public UserResponseDTO updateUser(int id, UserInfo user) {
         Optional<UserInfo> userOptional = userInfoRepository.findById(id);
 
         if(userOptional.isPresent()) {
@@ -89,7 +90,9 @@ public class UserInfoServiceImpl implements UserInfoService, UserDetailsService 
             userToUpdate.setUpdated_at(Instant.now());
             userToUpdate.setStatus(user.getStatus());
             userToUpdate.setOrganization(user.getOrganization());
-            return userInfoRepository.save(userToUpdate);
+            UserInfo userUpdateInfo = userInfoRepository.save(userToUpdate);
+
+            return mapUserToDTO(userUpdateInfo);
         }
         else{
             throw new ResourceNotFoundException("User not found");
@@ -108,10 +111,10 @@ public class UserInfoServiceImpl implements UserInfoService, UserDetailsService 
     }
 
     @Override
-    public UserInfo getUserbyId(int id) {
+    public UserResponseDTO getUserbyId(int id) {
 
-        return userInfoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found by the ID: " + id));
+        UserInfo user = userInfoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return mapUserToDTO(user);
     }
 
     @Override
@@ -128,12 +131,28 @@ public class UserInfoServiceImpl implements UserInfoService, UserDetailsService 
     }
 
     @Override
-    public List<UserInfo> getAllUsers() {
-
+    public List<UserResponseDTO> getAllUsers() {
         List<UserInfo> userOptional = userInfoRepository.findAll();
         if(userOptional.isEmpty()) {
-            throw new ResourceNotFoundException("User not found");
+            throw new ResourceNotFoundException("User not found!");
         }
-        return userOptional;
+        return userOptional.stream().map(this::mapUserToDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public UserResponseDTO getCurrentUser(String email) {
+
+        UserInfo currentUserInfo = userInfoRepository.findUserByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found!"));
+        return mapUserToDTO(currentUserInfo);
+    }
+
+    public UserResponseDTO mapUserToDTO(UserInfo userInfo) {
+        UserResponseDTO userDTO = new UserResponseDTO();
+        userDTO.setId(userInfo.getId());
+        userDTO.setName(userInfo.getName());
+        userDTO.setEmail(userInfo.getEmail());
+        userDTO.setStatus(userInfo.getStatus().toString());
+
+        return userDTO;
     }
 }
