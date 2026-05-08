@@ -1,4 +1,4 @@
-package com.example.smart_booking_platform;
+package com.gagani.smart_booking_platform;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
