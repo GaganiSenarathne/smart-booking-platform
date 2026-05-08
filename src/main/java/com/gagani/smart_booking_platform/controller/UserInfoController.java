@@ -3,7 +3,6 @@ package com.gagani.smart_booking_platform.controller;
 import com.gagani.smart_booking_platform.dto.UserRequestDTO;
 import com.gagani.smart_booking_platform.dto.UserResponseDTO;
 import com.gagani.smart_booking_platform.entity.AuthRequest;
-import com.gagani.smart_booking_platform.entity.UserInfo;
 import com.gagani.smart_booking_platform.service.JwtService;
 import com.gagani.smart_booking_platform.service.UserInfoService;
 import lombok.RequiredArgsConstructor;
