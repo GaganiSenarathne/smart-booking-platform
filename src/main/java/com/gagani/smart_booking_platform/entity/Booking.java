@@ -17,11 +17,11 @@ public class Booking {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserInfo user;
 
     @ManyToOne
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "resource_id", nullable = false)
     private Resource resource;
 
     private Instant startTime;
