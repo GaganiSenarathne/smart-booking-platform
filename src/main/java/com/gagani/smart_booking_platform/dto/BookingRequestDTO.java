@@ -13,4 +13,5 @@ public class BookingRequestDTO {
     private Instant startTime;
     private Instant endTime;
     private String notes;
+    private Instant bookingDate;
 }

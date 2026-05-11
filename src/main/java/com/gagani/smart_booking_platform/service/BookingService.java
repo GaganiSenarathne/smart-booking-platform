@@ -12,5 +12,6 @@ public interface BookingService {
     Page<BookingResponseDTO> getMyBookings(String email, Pageable pageable);
     Page<BookingResponseDTO> getAllBookings(Pageable pageable);
     BookingResponseDTO confirmBooking(Long id);
+    BookingResponseDTO completeBooking(Long id);
 
 }

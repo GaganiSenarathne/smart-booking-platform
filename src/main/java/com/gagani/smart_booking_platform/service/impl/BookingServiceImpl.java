@@ -100,13 +100,22 @@ public class BookingServiceImpl implements BookingService {
         return mapToBookingDTO(booking1);
     }
 
+    @Override
+    public BookingResponseDTO completeBooking(Long id) {
+        Booking booking = bookingRepository.findById(id).orElseThrow(()-> new RuntimeException("Booking not found!"));
+        booking.setStatus(BookingStatus.COMPLETED);
+        booking.setModified(Instant.now());
+        Booking booking1 = bookingRepository.save(booking);
+        return mapToBookingDTO(booking1);
+    }
+
     public BookingResponseDTO mapToBookingDTO(Booking booking) {
 
         BookingResponseDTO dto = new BookingResponseDTO();
 
         dto.setId(booking.getId());
         dto.setResourceName(booking.getResource().getName());
-        dto.setResourceType(booking.getResource().getType());
+        dto.setResourceType(String.valueOf(booking.getResource().getType()));
         dto.setStartTime(booking.getStartTime());
         dto.setEndTime(booking.getEndTime());
         dto.setStatus(booking.getStatus().name());

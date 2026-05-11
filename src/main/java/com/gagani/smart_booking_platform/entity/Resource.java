@@ -1,5 +1,6 @@
 package com.gagani.smart_booking_platform.entity;
 
+import com.gagani.smart_booking_platform.entity.enums.ResourceType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,11 +18,17 @@ public class Resource {
 
     private String description;
 
-    private String type; // e.g. DOCTOR, ROOM, EQUIPMENT
+    @Enumerated(EnumType.STRING)
+    private ResourceType type; // e.g. DOCTOR, ROOM, EQUIPMENT
 
-    private boolean active;
+    private boolean active = true;
 
     @ManyToOne
     @JoinColumn(name = "organization_id")
     private Organization organization;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserInfo createdBy;
+
 }

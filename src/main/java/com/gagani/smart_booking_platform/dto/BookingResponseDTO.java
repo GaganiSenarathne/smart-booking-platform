@@ -20,5 +20,9 @@ public class BookingResponseDTO {
     private String status;
     private String notes;
 
+    private String userEmail;
+    private Instant bookingDate;
+
     private Instant createdAt;
+
 }

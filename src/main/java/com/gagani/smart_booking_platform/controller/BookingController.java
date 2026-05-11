@@ -43,6 +43,11 @@ public class BookingController {
         return bookingService.cancelBooking(id, email);
     }
 
+    @PutMapping("{id}/complete")
+    public BookingResponseDTO completeBooking(@PathVariable Long id) {
+        return bookingService.completeBooking(id);
+    }
+
     @PutMapping("/confirm")
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public BookingResponseDTO confirmBooking(@PathVariable Long id) {
