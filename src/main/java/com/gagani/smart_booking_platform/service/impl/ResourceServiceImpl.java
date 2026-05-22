@@ -1,9 +1,10 @@
 package com.gagani.smart_booking_platform.service.impl;
 
-import com.gagani.smart_booking_platform.dto.ResourceRequestDTO;
-import com.gagani.smart_booking_platform.dto.ResourceResponseDTO;
+import com.gagani.smart_booking_platform.dto.request.ResourceRequestDTO;
+import com.gagani.smart_booking_platform.dto.response.ResourceResponseDTO;
 import com.gagani.smart_booking_platform.entity.Resource;
 import com.gagani.smart_booking_platform.entity.UserInfo;
+import com.gagani.smart_booking_platform.exception.DuplicateResourceException;
 import com.gagani.smart_booking_platform.exception.ResourceNotFoundException;
 import com.gagani.smart_booking_platform.repository.ResourceRepository;
 import com.gagani.smart_booking_platform.repository.UserInfoRepository;
@@ -27,14 +28,16 @@ public class ResourceServiceImpl implements ResourceService {
     public ResourceResponseDTO createResource(ResourceRequestDTO resourceRequestDTO, String email) {
 
         UserInfo user = userInfoRepository.findByEmail(email)
-                .orElseThrow(()-> new RuntimeException("User not Found!"));
+                .orElseThrow(()-> new ResourceNotFoundException(
+                STR."User not found with email: \{email}"
+        ));
 
         Resource resource = resourceRepository.findById(resourceRequestDTO.getId()).orElseThrow(() -> new ResourceNotFoundException(STR."Resource already found BY the ID: \{resourceRequestDTO.getId()}!"));
 
         Resource resource1 = resourceRepository.findByName(resourceRequestDTO.getName());
 
         if (resource1 != null) {
-            throw new RuntimeException("Resource already exists!");
+            throw new DuplicateResourceException("Resource already exists!");
         }
 
         resource.setName(resourceRequestDTO.getName());

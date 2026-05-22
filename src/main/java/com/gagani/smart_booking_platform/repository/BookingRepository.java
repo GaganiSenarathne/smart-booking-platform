@@ -15,11 +15,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Page<Booking> findByUserEmail(String email, Pageable pageable);
 
     @Query("""
-        SELECT b FROM Booking b
+        SELECT b
+        FROM Booking b
         WHERE b.resource.id = :resourceId
-        AND b.status IN ('CREATED', 'CONFIRMED')
+        AND b.status <> 'CANCELLED'
         AND (
-            (:start < b.endTime AND :end < b.startTime AND :end < b.endTime)
+            :start < b.endTime
+            AND :end > b.startTime
         )
     """)
     List<Booking> findConflictingBookings(@Param("resourceId") Long resourceId, @Param("start") Instant start, @Param("end") Instant end);

@@ -1,7 +1,7 @@
 package com.gagani.smart_booking_platform.service;
 
-import com.gagani.smart_booking_platform.dto.UserRequestDTO;
-import com.gagani.smart_booking_platform.dto.UserResponseDTO;
+import com.gagani.smart_booking_platform.dto.request.UserRequestDTO;
+import com.gagani.smart_booking_platform.dto.response.UserResponseDTO;
 import com.gagani.smart_booking_platform.entity.UserInfo;
 
 import java.util.List;

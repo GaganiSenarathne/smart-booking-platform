@@ -1,7 +1,7 @@
 package com.gagani.smart_booking_platform.service;
 
-import com.gagani.smart_booking_platform.dto.BookingRequestDTO;
-import com.gagani.smart_booking_platform.dto.BookingResponseDTO;
+import com.gagani.smart_booking_platform.dto.request.BookingRequestDTO;
+import com.gagani.smart_booking_platform.dto.response.BookingResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

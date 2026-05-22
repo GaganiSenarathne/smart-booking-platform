@@ -1,7 +1,7 @@
 package com.gagani.smart_booking_platform.controller;
 
-import com.gagani.smart_booking_platform.dto.BookingRequestDTO;
-import com.gagani.smart_booking_platform.dto.BookingResponseDTO;
+import com.gagani.smart_booking_platform.dto.request.BookingRequestDTO;
+import com.gagani.smart_booking_platform.dto.response.BookingResponseDTO;
 import com.gagani.smart_booking_platform.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

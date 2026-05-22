@@ -1,11 +1,15 @@
 package com.gagani.smart_booking_platform.service.impl;
 
-import com.gagani.smart_booking_platform.dto.BookingRequestDTO;
-import com.gagani.smart_booking_platform.dto.BookingResponseDTO;
+import com.gagani.smart_booking_platform.dto.request.BookingRequestDTO;
+import com.gagani.smart_booking_platform.dto.response.BookingResponseDTO;
 import com.gagani.smart_booking_platform.entity.Booking;
 import com.gagani.smart_booking_platform.entity.Resource;
 import com.gagani.smart_booking_platform.entity.UserInfo;
 import com.gagani.smart_booking_platform.entity.enums.BookingStatus;
+import com.gagani.smart_booking_platform.exception.BookingConflictException;
+import com.gagani.smart_booking_platform.exception.InvalidBookingException;
+import com.gagani.smart_booking_platform.exception.ResourceNotFoundException;
+import com.gagani.smart_booking_platform.exception.UnauthorizedException;
 import com.gagani.smart_booking_platform.repository.BookingRepository;
 import com.gagani.smart_booking_platform.repository.ResourceRepository;
 import com.gagani.smart_booking_platform.repository.UserInfoRepository;
@@ -30,14 +34,20 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponseDTO createBooking(BookingRequestDTO dto, String email) {
         UserInfo user = userInfoRepository.findByEmail(email)
-                .orElseThrow(()-> new RuntimeException("User not Found!"));
+                .orElseThrow(()-> new ResourceNotFoundException(
+                        STR."User not found with email: \{email}"
+                ));
 
         Resource resource = resourceRepository.findById(dto.getResourceId())
-                .orElseThrow(()-> new RuntimeException("Resource not Found!"));
+                .orElseThrow(()-> new ResourceNotFoundException(
+                        STR."Resource not found with id: \{dto.getResourceId()}"
+                ));
 
 //        Time logic
         if(dto.getStartTime().isAfter(dto.getEndTime())) {
-            throw new RuntimeException("Start Time must be after End Time!");
+            throw new InvalidBookingException(
+                    "Invalid booking time range"
+            );
         }
 
 //        Conflict Check
@@ -45,7 +55,7 @@ public class BookingServiceImpl implements BookingService {
 
         if(!conflicts.isEmpty()) {
 
-            throw new RuntimeException("Conflicting bookings found!");
+            throw new BookingConflictException("Conflicting bookings found!");
         }
 
         Booking booking = new Booking();
@@ -64,11 +74,13 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingResponseDTO cancelBooking(Long id, String email) {
 
-        Booking booking = bookingRepository.findById(id).orElseThrow(()-> new RuntimeException("Booking not found!"));
+        Booking booking = bookingRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException(
+                "Booking not found"
+        ));
 
 //        Checking Ownership
         if(!booking.getUser().getEmail().equals(email)) {
-            throw new RuntimeException("Not Allowed!");
+            throw new UnauthorizedException("The user is not authorized to perform this action");
         }
 
         booking.setStatus(BookingStatus.CANCELLED);
@@ -93,7 +105,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponseDTO confirmBooking(Long id) {
-        Booking booking = bookingRepository.findById(id).orElseThrow(()-> new RuntimeException("Booking not found!"));
+        Booking booking = bookingRepository.findById(id).orElseThrow(()-> new InvalidBookingException("Booking not found!"));
         booking.setStatus(BookingStatus.CONFIRMED);
         booking.setModified(Instant.now());
         Booking booking1 = bookingRepository.save(booking);
@@ -102,7 +114,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponseDTO completeBooking(Long id) {
-        Booking booking = bookingRepository.findById(id).orElseThrow(()-> new RuntimeException("Booking not found!"));
+        Booking booking = bookingRepository.findById(id).orElseThrow(()-> new InvalidBookingException("Booking not found!"));
         booking.setStatus(BookingStatus.COMPLETED);
         booking.setModified(Instant.now());
         Booking booking1 = bookingRepository.save(booking);

@@ -1,7 +1,7 @@
 package com.gagani.smart_booking_platform.service.impl;
 
-import com.gagani.smart_booking_platform.dto.UserRequestDTO;
-import com.gagani.smart_booking_platform.dto.UserResponseDTO;
+import com.gagani.smart_booking_platform.dto.request.UserRequestDTO;
+import com.gagani.smart_booking_platform.dto.response.UserResponseDTO;
 import com.gagani.smart_booking_platform.entity.Organization;
 import com.gagani.smart_booking_platform.entity.Role;
 import com.gagani.smart_booking_platform.entity.UserInfo;
@@ -46,7 +46,7 @@ public class UserInfoServiceImpl implements UserInfoService, UserDetailsService 
     @Override
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO) {
         if (userInfoRepository.findUserByEmail(userRequestDTO.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new DuplicateResourceException("Email already exists");
         }
 
         UserInfo user = new UserInfo();
@@ -57,12 +57,12 @@ public class UserInfoServiceImpl implements UserInfoService, UserDetailsService 
         user.setCreated_at(Instant.now());
         Organization organization = organizationRepository
                 .findById(userRequestDTO.getOrganizationId())
-                .orElseThrow(() -> new RuntimeException("Organization not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Organization not found"));
 
         user.setOrganization(organization);
 
         Role defaultRole = roleRepository.findByName("ROLE_USER")
-                .orElseThrow(() -> new RuntimeException("Default role USER not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Default user role not found"));
 
         user.setRoles(Set.of(defaultRole));
 
@@ -81,7 +81,7 @@ public class UserInfoServiceImpl implements UserInfoService, UserDetailsService 
 
             boolean exist = userInfoRepository.existsByEmailAndIdNot(user.getEmail(), id);
             if (exist) {
-                throw new DuplicateResourceException("User with email " + user.getEmail() + " already exists");
+                throw new DuplicateResourceException(STR."User with email \{user.getEmail()} already exists");
             }
 
             userToUpdate.setEmail(user.getEmail());

@@ -2,6 +2,7 @@ package com.gagani.smart_booking_platform.service.impl;
 
 import com.gagani.smart_booking_platform.entity.Role;
 import com.gagani.smart_booking_platform.entity.UserInfo;
+import com.gagani.smart_booking_platform.exception.ResourceNotFoundException;
 import com.gagani.smart_booking_platform.repository.RoleRepository;
 import com.gagani.smart_booking_platform.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Role findByName(String name) {
         return roleRepository.findByName(name)
-                .orElseThrow(() -> new RuntimeException("Role not found: " + name));
+                .orElseThrow(() -> new ResourceNotFoundException(STR."Role not found with name: \{name}"));
     }
 
 }
