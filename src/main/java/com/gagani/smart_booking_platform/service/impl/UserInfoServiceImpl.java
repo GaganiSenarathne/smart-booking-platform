@@ -81,7 +81,7 @@ public class UserInfoServiceImpl implements UserInfoService, UserDetailsService 
 
             boolean exist = userInfoRepository.existsByEmailAndIdNot(user.getEmail(), id);
             if (exist) {
-                throw new DuplicateResourceException(STR."User with email \{user.getEmail()} already exists");
+                throw new DuplicateResourceException(String.format("User with email %s already exists", user.getEmail()));
             }
 
             userToUpdate.setEmail(user.getEmail());

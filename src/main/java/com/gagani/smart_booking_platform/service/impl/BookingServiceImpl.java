@@ -35,12 +35,12 @@ public class BookingServiceImpl implements BookingService {
     public BookingResponseDTO createBooking(BookingRequestDTO dto, String email) {
         UserInfo user = userInfoRepository.findByEmail(email)
                 .orElseThrow(()-> new ResourceNotFoundException(
-                        STR."User not found with email: \{email}"
+                        String.format("User not found with email: %s", email)
                 ));
 
         Resource resource = resourceRepository.findById(dto.getResourceId())
                 .orElseThrow(()-> new ResourceNotFoundException(
-                        STR."Resource not found with id: \{dto.getResourceId()}"
+                        String.format("Resource not found with id: %s", dto.getResourceId())
                 ));
 
 //        Time logic

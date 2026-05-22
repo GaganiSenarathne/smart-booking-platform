@@ -5,6 +5,7 @@ import com.gagani.smart_booking_platform.dto.response.ResourceResponseDTO;
 import com.gagani.smart_booking_platform.entity.Resource;
 import com.gagani.smart_booking_platform.entity.UserInfo;
 import com.gagani.smart_booking_platform.exception.DuplicateResourceException;
+import com.gagani.smart_booking_platform.exception.InvalidBookingException;
 import com.gagani.smart_booking_platform.exception.ResourceNotFoundException;
 import com.gagani.smart_booking_platform.repository.ResourceRepository;
 import com.gagani.smart_booking_platform.repository.UserInfoRepository;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,10 +32,10 @@ public class ResourceServiceImpl implements ResourceService {
 
         UserInfo user = userInfoRepository.findByEmail(email)
                 .orElseThrow(()-> new ResourceNotFoundException(
-                STR."User not found with email: \{email}"
+                        String.format("User not found with email: %s", email)
         ));
 
-        Resource resource = resourceRepository.findById(resourceRequestDTO.getId()).orElseThrow(() -> new ResourceNotFoundException(STR."Resource already found BY the ID: \{resourceRequestDTO.getId()}!"));
+        Resource resource = resourceRepository.findById(resourceRequestDTO.getId()).orElseThrow(() -> new ResourceNotFoundException(String.format("Resource already found BY the ID: %s", resourceRequestDTO.getId())));
 
         Resource resource1 = resourceRepository.findByName(resourceRequestDTO.getName());
 
@@ -87,6 +90,19 @@ public class ResourceServiceImpl implements ResourceService {
         }else {
             throw new ResourceNotFoundException("Resource does not exist!");
         }
+    }
+
+    @Override
+    public List<ResourceResponseDTO> getAvailableResources(Instant start, Instant end) {
+
+        if(!start.isBefore(end)) {
+            throw new InvalidBookingException("Invalid start date!");
+
+        }
+
+        List<Resource> resources = resourceRepository.findAvailableResources(start, end);
+
+        return resources.stream().map(this::mapToResourceTO).toList();
     }
 
     public ResourceResponseDTO mapToResourceTO(Resource resource) {

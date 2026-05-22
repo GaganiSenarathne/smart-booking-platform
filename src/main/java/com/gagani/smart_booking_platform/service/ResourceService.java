@@ -5,6 +5,9 @@ import com.gagani.smart_booking_platform.dto.response.ResourceResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.Instant;
+import java.util.List;
+
 public interface ResourceService {
 
     ResourceResponseDTO createResource(ResourceRequestDTO resourceRequestDTO, String email);
@@ -12,5 +15,9 @@ public interface ResourceService {
     Page<ResourceResponseDTO> getAllResources(Pageable pageable);
     ResourceResponseDTO getResourceById(Long id);
     void deleteResource(Long id);
+    List<ResourceResponseDTO> getAvailableResources(
+            Instant start,
+            Instant end
+    );
 
 }
