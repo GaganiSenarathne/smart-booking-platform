@@ -1,6 +1,5 @@
 package com.gagani.smart_booking_platform.service.impl;
 
-import com.gagani.smart_booking_platform.dto.request.BookingRequestDTO;
 import com.gagani.smart_booking_platform.dto.request.OrganizationRequestDTO;
 import com.gagani.smart_booking_platform.dto.response.OrganizationRespondDTO;
 import com.gagani.smart_booking_platform.entity.Organization;

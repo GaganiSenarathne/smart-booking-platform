@@ -51,7 +51,7 @@ public class DataInitializer {
             org = organizationRepository.save(org);
 
         } else {
-            org = organizationRepository.findAll().get(0);
+            org = organizationRepository.findAll().getFirst();
         }
 
         // ================= ADMIN USER =================

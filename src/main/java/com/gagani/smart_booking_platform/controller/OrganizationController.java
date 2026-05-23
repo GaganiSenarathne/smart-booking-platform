@@ -1,7 +1,6 @@
 package com.gagani.smart_booking_platform.controller;
 
 import com.gagani.smart_booking_platform.dto.request.OrganizationRequestDTO;
-import com.gagani.smart_booking_platform.entity.Organization;
 import com.gagani.smart_booking_platform.service.OrganizationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
