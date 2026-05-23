@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -64,6 +65,9 @@ public class BookingServiceImpl implements BookingService {
         booking.setStatus(BookingStatus.CREATED);
         booking.setStartTime(dto.getStartTime());
         booking.setEndTime(dto.getEndTime());
+        booking.setCreated(Instant.now());
+        booking.setBookingDate(Instant.now());
+        booking.setModified(Instant.now());
         booking.setNotes(dto.getNotes());
 
         Booking savedBooking = bookingRepository.save(booking);

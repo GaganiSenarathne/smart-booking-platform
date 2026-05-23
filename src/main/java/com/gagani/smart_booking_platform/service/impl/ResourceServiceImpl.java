@@ -2,11 +2,13 @@ package com.gagani.smart_booking_platform.service.impl;
 
 import com.gagani.smart_booking_platform.dto.request.ResourceRequestDTO;
 import com.gagani.smart_booking_platform.dto.response.ResourceResponseDTO;
+import com.gagani.smart_booking_platform.entity.Organization;
 import com.gagani.smart_booking_platform.entity.Resource;
 import com.gagani.smart_booking_platform.entity.UserInfo;
 import com.gagani.smart_booking_platform.exception.DuplicateResourceException;
 import com.gagani.smart_booking_platform.exception.InvalidBookingException;
 import com.gagani.smart_booking_platform.exception.ResourceNotFoundException;
+import com.gagani.smart_booking_platform.repository.OrganizationRepository;
 import com.gagani.smart_booking_platform.repository.ResourceRepository;
 import com.gagani.smart_booking_platform.repository.UserInfoRepository;
 import com.gagani.smart_booking_platform.service.ResourceService;
@@ -25,27 +27,35 @@ public class ResourceServiceImpl implements ResourceService {
 
     private final ResourceRepository resourceRepository;
     private final UserInfoRepository userInfoRepository;
+    private final OrganizationRepository organizationRepository;
 
 
     @Override
     public ResourceResponseDTO createResource(ResourceRequestDTO resourceRequestDTO, String email) {
 
         UserInfo user = userInfoRepository.findByEmail(email)
-                .orElseThrow(()-> new ResourceNotFoundException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         String.format("User not found with email: %s", email)
-        ));
+                ));
 
-        Resource resource = resourceRepository.findById(resourceRequestDTO.getId()).orElseThrow(() -> new ResourceNotFoundException(String.format("Resource already found BY the ID: %s", resourceRequestDTO.getId())));
+        Organization organization = organizationRepository.findById(resourceRequestDTO.getOrganizationId())
+                .orElseThrow(() -> new ResourceNotFoundException("Organization not found"));
 
-        Resource resource1 = resourceRepository.findByName(resourceRequestDTO.getName());
+        Resource existingResource = resourceRepository.findByName(resourceRequestDTO.getName());
 
-        if (resource1 != null) {
+        if (existingResource != null) {
             throw new DuplicateResourceException("Resource already exists!");
         }
+
+        Resource resource = new Resource();
 
         resource.setName(resourceRequestDTO.getName());
         resource.setDescription(resourceRequestDTO.getDescription());
         resource.setCreatedBy(user);
+        resource.setType(resourceRequestDTO.getType());
+        resource.setActive(resourceRequestDTO.isActive());
+        resource.setOrganization(organization);
+
         Resource saved = resourceRepository.save(resource);
 
         return mapToResourceTO(saved);
@@ -112,6 +122,7 @@ public class ResourceServiceImpl implements ResourceService {
         resourceResponseDTO.setName(resource.getName());
         resourceResponseDTO.setDescription(resource.getDescription());
         resourceResponseDTO.setType(resourceResponseDTO.getType());
+        resourceResponseDTO.setOrganization(resource.getOrganization());
         resourceResponseDTO.setActive(resource.isActive());
 
         return resourceResponseDTO;

@@ -1,5 +1,6 @@
 package com.gagani.smart_booking_platform.dto.response;
 
+import com.gagani.smart_booking_platform.entity.Organization;
 import com.gagani.smart_booking_platform.entity.enums.ResourceType;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,5 +13,6 @@ public class ResourceResponseDTO {
     private String name;
     private ResourceType type;
     private boolean active;
+    private Organization organization;
     private String description;
 }

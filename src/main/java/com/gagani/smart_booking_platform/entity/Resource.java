@@ -19,6 +19,7 @@ public class Resource {
     private String description;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "resource_type")
     private ResourceType type; // e.g. DOCTOR, ROOM, EQUIPMENT
 
     private boolean active = true;

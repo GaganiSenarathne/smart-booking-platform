@@ -6,5 +6,6 @@ public enum ResourceType {
     EQUIPMENT,
     VEHICLE,
     HALL,
-    DOCTOR
+    DOCTOR,
+    MEDICAL
 }

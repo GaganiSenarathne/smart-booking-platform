@@ -52,7 +52,7 @@ public class UserInfoController {
     }
 
     @GetMapping("/user/profile")
-    public UserResponseDTO getUserInfo(@RequestBody UserRequestDTO userRequestDTO) {
+    public UserResponseDTO getUserInfo() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userInfoService.getCurrentUser(email);
     }

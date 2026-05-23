@@ -48,7 +48,7 @@ public class BookingController {
         return bookingService.completeBooking(id);
     }
 
-    @PutMapping("/confirm")
+    @PutMapping("/{id}/confirm")
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public BookingResponseDTO confirmBooking(@PathVariable Long id) {
         return bookingService.confirmBooking(id);
