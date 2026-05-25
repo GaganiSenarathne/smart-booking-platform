@@ -6,6 +6,8 @@ import com.gagani.smart_booking_platform.entity.AuthRequest;
 import com.gagani.smart_booking_platform.service.JwtService;
 import com.gagani.smart_booking_platform.service.UserInfoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,6 +47,7 @@ public class UserInfoController {
         );
         if (authentication.isAuthenticated()) {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
             return jwtService.generateToken(userDetails);
         } else {
             throw new UsernameNotFoundException("Invalid user request!");
@@ -57,6 +60,20 @@ public class UserInfoController {
         return userInfoService.getCurrentUser(email);
     }
 
+    @PutMapping("/user/{id}")
+    public ResponseEntity<UserResponseDTO> updateUserInfo(@RequestBody UserRequestDTO userRequestDTO, @PathVariable int id) {
+        return ResponseEntity.ok(userInfoService.updateUser(id, userRequestDTO));
+    }
 
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity<UserResponseDTO> deleteUser(@PathVariable int id) {
+        userInfoService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/allUsers")
+    public ResponseEntity<Page<UserResponseDTO>> getAllUsers(Pageable pageable) {
+        return ResponseEntity.ok(userInfoService.getAllUsers(pageable));
+    }
 
 }

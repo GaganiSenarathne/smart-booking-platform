@@ -34,6 +34,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 HttpStatus.CONFLICT.name()
         );
+
         return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
     }
 
@@ -46,6 +47,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 HttpStatus.CONFLICT.name()
         );
+
         return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
     }
 
@@ -58,6 +60,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 HttpStatus.UNAUTHORIZED.name()
         );
+
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
     }
 
@@ -70,6 +73,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.name()
         );
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
     }
 
@@ -83,6 +87,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.name()
         );
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
     }
 

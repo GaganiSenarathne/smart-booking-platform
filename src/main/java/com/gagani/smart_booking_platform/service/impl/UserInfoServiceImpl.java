@@ -13,6 +13,8 @@ import com.gagani.smart_booking_platform.repository.RoleRepository;
 import com.gagani.smart_booking_platform.repository.UserInfoRepository;
 import com.gagani.smart_booking_platform.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -55,15 +57,14 @@ public class UserInfoServiceImpl implements UserInfoService, UserDetailsService 
         user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
         user.setStatus(UserStatus.ACTIVE);
         user.setCreated_at(Instant.now());
-        Organization organization = organizationRepository
-                .findById(userRequestDTO.getOrganizationId())
-                .orElseThrow(() -> new ResourceNotFoundException("Organization not found"));
 
+        Organization organization = organizationRepository
+                .findById(userRequestDTO.getOrganization().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Organization not found"));
         user.setOrganization(organization);
 
         Role defaultRole = roleRepository.findByName("ROLE_USER")
                 .orElseThrow(() -> new ResourceNotFoundException("Default user role not found"));
-
         user.setRoles(Set.of(defaultRole));
 
         UserInfo userInfo =  userInfoRepository.save(user); // need to return saved entity
@@ -72,14 +73,14 @@ public class UserInfoServiceImpl implements UserInfoService, UserDetailsService 
     }
 
     @Override
-    public UserResponseDTO updateUser(int id, UserInfo user) {
+    public UserResponseDTO updateUser(int id, UserRequestDTO user) {
         Optional<UserInfo> userOptional = userInfoRepository.findById(id);
 
         if(userOptional.isPresent()) {
             UserInfo userToUpdate = userOptional.get();
             userToUpdate.setName(user.getName());
 
-            boolean exist = userInfoRepository.existsByEmailAndIdNot(user.getEmail(), id);
+            boolean exist = userInfoRepository.existsByEmailAndIdNot(user.getEmail(), (long) id);
             if (exist) {
                 throw new DuplicateResourceException(String.format("User with email %s already exists", user.getEmail()));
             }
@@ -112,15 +113,16 @@ public class UserInfoServiceImpl implements UserInfoService, UserDetailsService 
 
     @Override
     public UserResponseDTO getUserbyId(int id) {
-
         UserInfo user = userInfoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return mapUserToDTO(user);
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
         UserInfo user = userInfoRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
@@ -131,27 +133,33 @@ public class UserInfoServiceImpl implements UserInfoService, UserDetailsService 
     }
 
     @Override
-    public List<UserResponseDTO> getAllUsers() {
-        List<UserInfo> userOptional = userInfoRepository.findAll();
+    public Page<UserResponseDTO> getAllUsers(Pageable pageable) {
+        Page<UserInfo> userOptional = userInfoRepository.findAll(pageable);
         if(userOptional.isEmpty()) {
             throw new ResourceNotFoundException("User not found!");
         }
-        return userOptional.stream().map(this::mapUserToDTO).collect(Collectors.toList());
+
+        return userOptional.map(this::mapUserToDTO);
     }
 
     @Override
     public UserResponseDTO getCurrentUser(String email) {
-
         UserInfo currentUserInfo = userInfoRepository.findUserByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found!"));
+
         return mapUserToDTO(currentUserInfo);
     }
 
     public UserResponseDTO mapUserToDTO(UserInfo userInfo) {
+
         UserResponseDTO userDTO = new UserResponseDTO();
-        userDTO.setId(userInfo.getId());
+
         userDTO.setName(userInfo.getName());
         userDTO.setEmail(userInfo.getEmail());
-        userDTO.setStatus(userInfo.getStatus().toString());
+        userDTO.setRole(userInfo.getRoles());
+        userDTO.setStatus(userInfo.getStatus());
+        userDTO.setAddress(userInfo.getAddress());
+        userDTO.setPhone(userInfo.getPhone());
+        userDTO.setOrganization(userInfo.getOrganization());
 
         return userDTO;
     }

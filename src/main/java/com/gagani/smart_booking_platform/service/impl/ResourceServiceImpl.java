@@ -18,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -77,23 +76,18 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Override
     public ResourceResponseDTO getResourceById(Long id) {
-
         Resource resource = resourceRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Resource does not exist!"));
-
         return mapToResourceTO(resource);
     }
 
-
     @Override
     public Page<ResourceResponseDTO> getAllResources(Pageable pageable) {
-
         Page<Resource> resources = resourceRepository.findAll(pageable);
         return resources.map(this::mapToResourceTO);
     }
 
     @Override
     public void deleteResource(Long id) {
-
         Optional<Resource> resourceOptional = resourceRepository.findById(id);
         if (resourceOptional.isPresent()) {
             resourceRepository.deleteById(id);
@@ -103,21 +97,20 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public List<ResourceResponseDTO> getAvailableResources(Instant start, Instant end) {
+    public Page<ResourceResponseDTO> getAvailableResources(Instant start, Instant end, Pageable pageable) {
 
         if(!start.isBefore(end)) {
             throw new InvalidBookingException("Invalid start date!");
-
         }
+        Page<Resource> resources = resourceRepository.findAvailableResources(start, end, pageable);
 
-        List<Resource> resources = resourceRepository.findAvailableResources(start, end);
-
-        return resources.stream().map(this::mapToResourceTO).toList();
+        return resources.map(this::mapToResourceTO);
     }
 
     public ResourceResponseDTO mapToResourceTO(Resource resource) {
 
         ResourceResponseDTO resourceResponseDTO = new ResourceResponseDTO();
+
         resourceResponseDTO.setId(resource.getId());
         resourceResponseDTO.setName(resource.getName());
         resourceResponseDTO.setDescription(resource.getDescription());

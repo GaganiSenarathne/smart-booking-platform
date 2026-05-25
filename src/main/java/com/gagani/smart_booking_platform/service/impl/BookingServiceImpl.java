@@ -59,6 +59,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         Booking booking = new Booking();
+
         booking.setUser(user);
         booking.setResource(resource);
         booking.setStatus(BookingStatus.CREATED);
@@ -95,7 +96,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Page<BookingResponseDTO> getMyBookings(String email, Pageable pageable) {
-
         Page<Booking> bookings = bookingRepository.findByUserEmail(email, pageable);
         return bookings.map(this::mapToBookingDTO);
     }
@@ -124,6 +124,12 @@ public class BookingServiceImpl implements BookingService {
         return mapToBookingDTO(booking1);
     }
 
+    @Override
+    public void deleteBooking(Long id) {
+        Booking booking = bookingRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Booking not found!"));
+        bookingRepository.delete(booking);
+    }
+
     public BookingResponseDTO mapToBookingDTO(Booking booking) {
 
         BookingResponseDTO dto = new BookingResponseDTO();
@@ -136,6 +142,8 @@ public class BookingServiceImpl implements BookingService {
         dto.setStatus(booking.getStatus().name());
         dto.setNotes(booking.getNotes());
         dto.setCreatedAt(booking.getCreated());
+        dto.setUserEmail(booking.getUser().getEmail());
+        dto.setBookingDate(booking.getBookingDate());
 
         return dto;
     }

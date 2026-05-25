@@ -54,4 +54,12 @@ public class BookingController {
         return bookingService.confirmBooking(id);
     }
 
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    public ResponseEntity<BookingResponseDTO> deleteBooking(@PathVariable Long id) {
+        bookingService.deleteBooking(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

@@ -15,9 +15,6 @@ public interface ResourceService {
     Page<ResourceResponseDTO> getAllResources(Pageable pageable);
     ResourceResponseDTO getResourceById(Long id);
     void deleteResource(Long id);
-    List<ResourceResponseDTO> getAvailableResources(
-            Instant start,
-            Instant end
-    );
+    Page<ResourceResponseDTO> getAvailableResources(Instant start, Instant end, Pageable pageable);
 
 }

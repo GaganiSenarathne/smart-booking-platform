@@ -7,7 +7,7 @@ import java.time.Instant;
 
 @Getter
 @Setter
-public class OrganizationRespondDTO {
+public class OrganizationResponseDTO {
 
     private String name;
     private String address;

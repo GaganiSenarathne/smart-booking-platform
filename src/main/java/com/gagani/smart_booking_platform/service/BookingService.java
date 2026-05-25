@@ -13,5 +13,6 @@ public interface BookingService {
     Page<BookingResponseDTO> getAllBookings(Pageable pageable);
     BookingResponseDTO confirmBooking(Long id);
     BookingResponseDTO completeBooking(Long id);
+    void deleteBooking(Long id);
 
 }

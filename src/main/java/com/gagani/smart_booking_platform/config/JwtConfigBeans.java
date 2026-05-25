@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public class JwtConfigBeans {
 
     @Bean
-    public JwtAuthFilter jwtAuthFilter(UserDetailsService userDetailsService, JwtService jwtService) {
-        return new JwtAuthFilter(userDetailsService, jwtService);
+    public JwtAuthFilter jwtAuthFilter(JwtService jwtService) {
+        return new JwtAuthFilter(jwtService);
     }
 }

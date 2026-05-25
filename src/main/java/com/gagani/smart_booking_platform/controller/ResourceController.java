@@ -12,7 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,7 +22,6 @@ public class ResourceController {
 
     @PostMapping
     public ResponseEntity<ResourceResponseDTO> resource(@RequestBody ResourceRequestDTO resourceRequestDTO) {
-
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return ResponseEntity.ok(resourceService.createResource(resourceRequestDTO, email));
     }
@@ -42,14 +40,11 @@ public class ResourceController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     public ResourceResponseDTO updateResource(@PathVariable Long id, @RequestBody ResourceRequestDTO resourceRequestDTO) {
         return resourceService.updateResource(id, resourceRequestDTO);
-
     }
 
     @GetMapping("/availableResources")
-    public ResponseEntity<List<ResourceResponseDTO>> getAvailableResources(@RequestParam Instant start, @RequestParam Instant end) {
-
-        return ResponseEntity.ok(resourceService.getAvailableResources(start, end));
-
+    public ResponseEntity<Page<ResourceResponseDTO>> getAvailableResources(@RequestParam Instant start, @RequestParam Instant end, Pageable pageable) {
+        return ResponseEntity.ok(resourceService.getAvailableResources(start, end, pageable));
     }
 
     @DeleteMapping("/{id}")
