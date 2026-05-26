@@ -14,6 +14,7 @@ import com.gagani.smart_booking_platform.repository.BookingRepository;
 import com.gagani.smart_booking_platform.repository.ResourceRepository;
 import com.gagani.smart_booking_platform.repository.UserInfoRepository;
 import com.gagani.smart_booking_platform.service.BookingService;
+import com.gagani.smart_booking_platform.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final ResourceRepository resourceRepository;
     private final UserInfoRepository userInfoRepository;
+    private final EmailService emailService;
 
 
     @Override
@@ -71,6 +73,8 @@ public class BookingServiceImpl implements BookingService {
         booking.setNotes(dto.getNotes());
 
         Booking savedBooking = bookingRepository.save(booking);
+
+        emailService.sendBookingConfirmationEmail(user.getEmail(), resource.getName());
 
         return mapToBookingDTO(savedBooking);
     }
