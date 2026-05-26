@@ -53,6 +53,4 @@ public class ResourceController {
         resourceService.deleteResource(id);
         return ResponseEntity.noContent().build();
     }
-
-
 }
