@@ -13,20 +13,5 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-  
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: gaganidev@gmail.com
-    password: "gobr sjby jspa prgi"
-    
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
-
 
 

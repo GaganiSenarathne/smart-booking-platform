@@ -56,8 +56,6 @@ public class UserInfoServiceImpl implements UserInfoService, UserDetailsService 
         user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
         user.setStatus(UserStatus.ACTIVE);
         user.setCreated_at(Instant.now());
-        user.setAddress(userRequestDTO.getAddress());
-        user.setPhone(userRequestDTO.getPhone());
 
         Organization organization = organizationRepository
                 .findById(userRequestDTO.getOrganization().getId())
